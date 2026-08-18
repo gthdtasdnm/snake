@@ -242,8 +242,11 @@ export function starteSchale({
       .filter((p) => p.connected && p.id !== r.hostId)
       .every((p) => p.ready);
     $("startBtn").disabled = da < r.minPlayers || !alleBereit;
+    // Der Solo-Zweig ist nur bei minPlayers === 1 erreichbar; wo zwei noetig
+    // sind, faengt die Zeile darueber den Fall schon ab.
     $("startHint").textContent = da < r.minPlayers
       ? `Mindestens ${r.minPlayers} Leute – ihr seid ${da}.`
+      : da === 1 ? "Allein unterwegs – du kannst sofort starten."
       : alleBereit ? "" : "Noch nicht alle sind bereit.";
     $("readyBtn").classList.toggle("on", !!ich()?.ready);
   }

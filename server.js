@@ -12,7 +12,11 @@ const HOST = Deno.env.get("HOST") ?? "0.0.0.0";
 const PUBLIC = new URL("./public/", import.meta.url);
 
 const MAX_PLAYERS = 6;
-const MIN_PLAYERS = 2;
+// Eins, nicht zwei: Snake allein ist das Snake, das jeder kennt – fahren, bis
+// man sich selbst frisst. Wer allein spielt, bekommt am Rundenende keine
+// zwanzig Ueberlebenspunkte (siehe pruefeRundenende), sonst waere die
+// Bestenliste geschenkt.
+const MIN_PLAYERS = 1;
 
 const W = 32, H = 24;          // Felder
 const TICK_MS = 130;           // Schritt der Schlangen

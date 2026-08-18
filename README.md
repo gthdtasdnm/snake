@@ -24,8 +24,10 @@ deno task probe        # spielt drei Runden mit sechs Clients (Server muss laufe
 ## An den Tisch kommen
 
 Name eintippen, **Raum eröffnen** oder über die Liste bzw. den vierstelligen
-**Code** beitreten. **Zwei bis sechs** Leute. Der Host stellt **1, 3 oder 5**
-Runden ein.
+**Code** beitreten. **Eine bis sechs** Leute – `MIN_PLAYERS` steht seit dem
+18.08.2026 auf **1**, allein ist es das Snake, das jeder kennt. Die zwanzig
+Überlebenspunkte am Rundenende gibt es dann nicht, sonst wäre die Bestenliste
+geschenkt. Der Host stellt **1, 3 oder 5** Runden ein.
 
 ## Das Feld
 
