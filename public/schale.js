@@ -14,6 +14,33 @@
 
 export const $ = (id) => document.getElementById(id);
 
+/**
+ * Texte, die hier entstehen statt im HTML zu stehen.
+ *
+ * `sprache.js` liegt nicht in jedem Spiel - nur in denen, die schon uebersetzt
+ * sind. Deshalb ist der deutsche Wortlaut das dritte Argument und nicht der
+ * Notnagel: ohne `sprache.js` steht hier woertlich dasselbe wie vorher, und
+ * ein Spiel ohne Uebersetzung merkt von dieser Zeile nichts.
+ */
+const T = (schluessel, werte, deutsch) =>
+  globalThis.sprache?.t(schluessel, werte, deutsch) ?? deutsch;
+
+/**
+ * Ein Satz, der vom **Server** kommt.
+ *
+ * Der Server kennt die Sprache des Clients nicht und soll sie auch nicht
+ * kennen - jeder am Tisch kann eine andere eingestellt haben. Deshalb schickt
+ * er beides: den deutschen Wortlaut und einen Schluessel dazu.
+ *
+ *   room.meldung = { text: `${name} hat ein Paar!`, k: "p.paar", w: { name } };
+ *
+ * Uebersetzt wird hier, im Client, und zwar fuer jeden in seiner eigenen
+ * Sprache. Eine blosse Zeichenkette geht weiterhin durch - so bleiben Spiele,
+ * die noch nichts davon wissen, unveraendert.
+ */
+export const satz = (x) =>
+  x == null ? "" : typeof x === "string" ? x : T(x.k, x.w ?? {}, x.text ?? "");
+
 export function el(tag, cls, text) {
   const n = document.createElement(tag);
   if (cls) n.className = cls;
@@ -29,7 +56,7 @@ export const S = {
 export const schicke = (m) =>
   S.ws?.readyState === WebSocket.OPEN && S.ws.send(JSON.stringify(m));
 
-export const nameFeld = () => $("name").value.trim() || "Spieler";
+export const nameFeld = () => $("name").value.trim() || T("schale.spieler", {}, "Spieler");
 
 export function toast(text) {
   const t = $("toast");
@@ -180,7 +207,7 @@ export function starteSchale({
     };
     S.ws.onclose = () => {
       clearTimeout(bewaehrung);
-      $("status").textContent = "Verbindung weg – neu verbinden …";
+      $("status").textContent = T("schale.weg", {}, "Verbindung weg – neu verbinden …");
       const gleich = warte * (0.8 + Math.random() * 0.4);
       warte = Math.min(warte * 1.8, WARTE_MAX);
       setTimeout(() => verbinde(() => {
@@ -190,12 +217,18 @@ export function starteSchale({
     };
   }
 
+  // Gemerkt, damit sie nach einem Sprachwechsel neu gezeichnet werden kann:
+  // „Gerade keine offenen Raeume" stand sonst weiter auf Deutsch da, bis der
+  // Server das Naechste schickt.
+  let letzteRaeume = [];
+
   function zeichneRaeume(liste) {
+    letzteRaeume = liste;
     const box = $("roomList");
     box.innerHTML = "";
     $("roomsCount").textContent = liste.length ? `(${liste.length})` : "";
     if (!liste.length) {
-      box.append(el("div", "rooms-empty", "Gerade keine offenen Räume."));
+      box.append(el("div", "rooms-empty", T("schale.keineRaeume", {}, "Gerade keine offenen Räume.")));
       return;
     }
     for (const r of liste) {
@@ -216,7 +249,9 @@ export function starteSchale({
     const r = S.room;
     if (r.phase === "lobby") zeige("lobby");
     $("roomCode").textContent = r.code;
-    $("roomVis").textContent = r.isPublic ? "öffentlich" : "privat";
+    $("roomVis").textContent = r.isPublic
+      ? T("schale.oeffentlich", {}, "öffentlich")
+      : T("schale.privat", {}, "privat");
     $("lobbyCount").textContent = `${r.players.length}/${r.maxPlayers}`;
 
     const liste = $("playerList");
@@ -225,8 +260,13 @@ export function starteSchale({
       const s = el("div", "seat" + (p.ready ? " ready" : "") + (p.connected ? "" : " off"));
       s.append(el("div", "av", (p.name[0] ?? "?").toUpperCase()));
       s.append(el("div", "nm", p.name));
-      s.append(el("div", "st", p.ready ? "bereit" : p.connected ? "wartet" : "weg"));
-      if (p.host) s.append(el("div", "host", "Host"));
+      s.append(el("div", "st",
+        p.ready
+          ? T("schale.bereit", {}, "bereit")
+          : p.connected
+          ? T("schale.wartet", {}, "wartet")
+          : T("schale.fort", {}, "weg")));
+      if (p.host) s.append(el("div", "host", T("schale.host", {}, "Host")));
       liste.append(s);
     }
 
@@ -245,15 +285,17 @@ export function starteSchale({
     // Der Solo-Zweig ist nur bei minPlayers === 1 erreichbar; wo zwei noetig
     // sind, faengt die Zeile darueber den Fall schon ab.
     $("startHint").textContent = da < r.minPlayers
-      ? `Mindestens ${r.minPlayers} Leute – ihr seid ${da}.`
-      : da === 1 ? "Allein unterwegs – du kannst sofort starten."
-      : alleBereit ? "" : "Noch nicht alle sind bereit.";
+      ? T("schale.mindestens", { min: r.minPlayers, da },
+        `Mindestens ${r.minPlayers} Leute – ihr seid ${da}.`)
+      : da === 1
+      ? T("schale.allein", {}, "Allein unterwegs – du kannst sofort starten.")
+      : alleBereit ? "" : T("schale.nichtBereit", {}, "Noch nicht alle sind bereit.");
     $("readyBtn").classList.toggle("on", !!ich()?.ready);
   }
 
   function standardFinal(m) {
     zeige("final");
-    $("finalSub").textContent = m.untertitel ?? "";
+    $("finalSub").textContent = satz(m.untertitel);
     const ol = $("podium");
     ol.innerHTML = "";
     for (const z of m.tabelle ?? []) {
@@ -289,7 +331,7 @@ export function starteSchale({
     const link = location.origin + location.pathname + "#" + S.code;
     try {
       await navigator.clipboard.writeText(link);
-      toast("Link kopiert");
+      toast(T("schale.kopiert", {}, "Link kopiert"));
     } catch {
       toast(link);
     }
@@ -298,6 +340,15 @@ export function starteSchale({
   $("startBtn").onclick = () => schicke({ t: "start" });
   if ($("endeBtn")) $("endeBtn").onclick = () => schicke({ t: "ende" });
   $("againBtn").onclick = () => schicke({ t: "again" });
+
+  // Umgeschaltet wird selten, aber wenn, dann mitten im Warteraum: was hier
+  // gezeichnet wurde, traegt sonst weiter die alte Sprache. Das Ereignis kommt
+  // von `sprache.js` und bleibt ohne sie einfach aus.
+  document.addEventListener("sprachwechsel", () => {
+    zeichneRaeume(letzteRaeume);
+    if (S.room) zeichneLobby();
+    if (S.runde) zeichneSpiel?.(S.runde);
+  });
   // Hinaus geht es von ueberall, nicht nur aus der Lobby: `#leaveBtn` und jeder
   // Knopf mit `data-raus`. Vorher fuehrte aus dem Spielbildschirm nur der
   // Zurueck-Knopf des Browsers heraus, und aus dem Endstand gar nichts - wer
