@@ -68,6 +68,25 @@ export const SCHALE_WOERTER = {
     "schale.allein": "Tek başınasın – hemen başlayabilirsin.",
     "schale.nichtBereit": "Henüz herkes hazır değil.",
     "schale.kopiert": "Bağlantı kopyalandı",
+
+    // --- Die Spiele mit eigener Klempnerei (Gruppe C) ---
+    // Sie tragen Verbindung und Warteraum von Hand im app.js, mit eigenem
+    // Wortlaut - untereinander aber demselben. Deshalb hier und nicht je Spiel.
+    "c.weg": "Bağlantı koptu – yeniden deneniyor …",
+    "c.keinRaum": "Şu anda açık oda yok. Sen bir tane aç – diğerlerinin listesinde görünür.",
+    "c.codeBitte": "Lütfen dört haneli kodu gir",
+    "c.oeffentlich": "Herkese açık – listede görünür",
+    "c.privat": "Gizli – yalnızca kodla",
+    "c.frei": "boş",
+    "c.wartet": "bekliyor",
+    "c.kommtWieder": "geri gelecek",
+    "c.teiltAus": "dağıtıyor",
+    "c.dabei": "oyunda",
+    "c.host": "ODA SAHİBİ",
+    "c.linkKopiert": "Bağlantı kopyalandı",
+    "c.abGehtLos": "{n} kişiden başlar.",
+    "c.alleBereit": "Herkes hazır!",
+    "c.du": " (sen)",
   },
 
   en: {
@@ -117,5 +136,22 @@ export const SCHALE_WOERTER = {
     "schale.allein": "On your own – you can start right away.",
     "schale.nichtBereit": "Not everyone is ready yet.",
     "schale.kopiert": "Link copied",
+
+    // --- Die Spiele mit eigener Klempnerei (Gruppe C) ---
+    "c.weg": "Connection lost – trying again …",
+    "c.keinRaum": "No room is open right now. Open one – it will show up in everyone else's list.",
+    "c.codeBitte": "Please enter the four-letter code",
+    "c.oeffentlich": "Public – shown in the list",
+    "c.privat": "Private – code only",
+    "c.frei": "free",
+    "c.wartet": "waiting",
+    "c.kommtWieder": "coming back",
+    "c.teiltAus": "deals",
+    "c.dabei": "in",
+    "c.host": "HOST",
+    "c.linkKopiert": "Link copied",
+    "c.abGehtLos": "It starts at {n}.",
+    "c.alleBereit": "Everyone is ready!",
+    "c.du": " (you)",
   },
 };
