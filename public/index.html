@@ -16,66 +16,69 @@
 <section id="screen-home" class="screen active">
   <div class="home">
     <h1 class="logo">SNA<span>KE</span></h1>
-    <p class="tag">Ein Feld, alle Schlangen, kein Platz.</p>
+    <p class="tag" data-t="snake.tag">Ein Feld, alle Schlangen, kein Platz.</p>
 
-    <label class="field-label" for="name">Dein Name</label>
-    <input id="name" maxlength="12" placeholder="z.&nbsp;B. Mo" autocomplete="nickname">
+    <label class="field-label" for="name" data-t="schale.deinName">Dein Name</label>
+    <input id="name" maxlength="12" placeholder="z.&nbsp;B. Mo" autocomplete="nickname"
+           data-t-attr="placeholder:schale.namePlatz">
 
     <div id="homeExtra"></div>
 
     <div class="setting">
-      <span class="setting-label">Sichtbar</span>
+      <span class="setting-label" data-t="schale.sichtbar">Sichtbar</span>
       <div class="segmented">
-        <button class="seg sel" data-vis="public">Öffentlich</button>
-        <button class="seg" data-vis="private">Privat</button>
+        <button class="seg sel" data-vis="public" data-t="schale.oeffentlichKnopf">Öffentlich</button>
+        <button class="seg" data-vis="private" data-t="schale.privatKnopf">Privat</button>
       </div>
     </div>
-    <button id="createBtn" class="btn primary big">Raum eröffnen</button>
+    <button id="createBtn" class="btn primary big" data-t="schale.raumAuf">Raum eröffnen</button>
 
-    <div class="or"><span>oder beitreten</span></div>
+    <div class="or"><span data-t="schale.oder">oder beitreten</span></div>
 
-    <div class="rooms-head">Offene Räume <span id="roomsCount"></span></div>
+    <div class="rooms-head"><span data-t="schale.offeneRaeume">Offene Räume</span> <span id="roomsCount"></span></div>
     <div id="roomList" class="roomlist"></div>
 
     <div class="joinrow">
       <input id="codeInput" maxlength="5" placeholder="CODE" autocapitalize="characters"
-             autocomplete="off" spellcheck="false">
-      <button id="joinBtn" class="btn">Mit Code</button>
+             autocomplete="off" spellcheck="false" data-t-attr="placeholder:schale.codePlatz">
+      <button id="joinBtn" class="btn" data-t="schale.mitCode">Mit Code</button>
     </div>
 
-    <button id="helpBtn" class="btn ghost small">Wie geht das?</button>
-    <p class="zurueckzeile"><a class="zurueck" href="/spiele/">← Alle Spiele</a></p>
+    <button id="helpBtn" class="btn ghost small" data-t="schale.wieGeht">Wie geht das?</button>
+    <p class="zurueckzeile"><a class="zurueck" href="/spiele/" data-t="schale.alleSpiele">← Alle Spiele</a></p>
+    <!-- Fuellt sprache.js; ohne JavaScript bleibt er leer. -->
+    <div data-sprachwahl aria-label="Sprache"></div>
   </div>
 </section>
 
 <section id="screen-lobby" class="screen">
   <div class="lobby">
     <div class="codebox">
-      <span class="codebox-label">Raumcode</span>
+      <span class="codebox-label" data-t="schale.raumcode">Raumcode</span>
       <strong id="roomCode">····</strong>
       <span id="roomVis" class="codebox-vis"></span>
-      <button id="copyBtn" class="btn ghost small">Link kopieren</button>
+      <button id="copyBtn" class="btn ghost small" data-t="schale.linkKopieren">Link kopieren</button>
     </div>
-    <div class="lobby-head"><h2>Spieler <span id="lobbyCount">1/6</span></h2></div>
+    <div class="lobby-head"><h2><span data-t="schale.spielerKopf">Spieler</span> <span id="lobbyCount">1/6</span></h2></div>
     <div id="playerList" class="seats"></div>
 
     <div id="hostControls" hidden>
       <div id="hostExtra"></div>
       <div class="setting">
-        <span class="setting-label">Sichtbar</span>
+        <span class="setting-label" data-t="schale.sichtbar">Sichtbar</span>
         <div class="segmented">
-          <button class="seg" data-lobbyvis="public">Öffentlich</button>
-          <button class="seg" data-lobbyvis="private">Privat</button>
+          <button class="seg" data-lobbyvis="public" data-t="schale.oeffentlichKnopf">Öffentlich</button>
+          <button class="seg" data-lobbyvis="private" data-t="schale.privatKnopf">Privat</button>
         </div>
       </div>
-      <button id="startBtn" class="btn primary big">Runde starten</button>
+      <button id="startBtn" class="btn primary big" data-t="schale.starten">Runde starten</button>
       <p id="startHint" class="hintline"></p>
     </div>
     <div id="guestControls" hidden>
-      <button id="readyBtn" class="btn big">Bereit!</button>
-      <p class="hintline">Der Host startet, sobald alle bereit sind.</p>
+      <button id="readyBtn" class="btn big" data-t="schale.bereitKnopf">Bereit!</button>
+      <p class="hintline" data-t="schale.hostStartet">Der Host startet, sobald alle bereit sind.</p>
     </div>
-    <button id="leaveBtn" class="btn ghost small">Raum verlassen</button>
+    <button id="leaveBtn" class="btn ghost small" data-t="schale.verlassen">Raum verlassen</button>
   </div>
 </section>
 
@@ -84,8 +87,8 @@
     <header class="topbar">
       <div class="tb-runde" id="tbLinks"></div>
       <div class="tb-modus" id="tbTag"></div>
-      <button id="endeBtn" class="btn ghost sm" hidden>Beenden</button>
-      <button class="btn ghost sm" data-raus>Verlassen</button>
+      <button id="endeBtn" class="btn ghost sm" hidden data-t="schale.beenden">Beenden</button>
+      <button class="btn ghost sm" data-raus data-t="schale.raus">Verlassen</button>
     </header>
     <main class="buehne" id="buehne"></main>
     <footer class="fussbereich">
@@ -97,20 +100,20 @@
 
 <section id="screen-final" class="screen">
   <div class="final">
-    <h2 class="final-title">Endstand</h2>
+    <h2 class="final-title" data-t="schale.endstand">Endstand</h2>
     <p id="finalSub" class="hintline"></p>
     <ol id="podium" class="podium"></ol>
-    <button id="againBtn" class="btn big">Nochmal!</button>
-    <p id="againHint" class="hintline">Der Host holt alle zurück in den Warteraum.</p>
-    <button class="btn ghost small" data-raus>Raum verlassen</button>
+    <button id="againBtn" class="btn big" data-t="schale.nochmal">Nochmal!</button>
+    <p id="againHint" class="hintline" data-t="schale.zurueckWarteraum">Der Host holt alle zurück in den Warteraum.</p>
+    <button class="btn ghost small" data-raus data-t="schale.verlassen">Raum verlassen</button>
   </div>
 </section>
 
 <div id="help" hidden>
   <div class="help-inner">
-    <h2>So läuft das</h2>
+    <h2 data-t="schale.soLaeuft">So läuft das</h2>
     <ul id="helpList"></ul>
-    <button id="helpClose" class="btn">Alles klar</button>
+    <button id="helpClose" class="btn" data-t="schale.allesKlar">Alles klar</button>
   </div>
 </div>
 

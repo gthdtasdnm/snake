@@ -280,16 +280,22 @@ console.log("ok  Runde 2 beginnt neu: alle leben, alle wieder vier Glieder lang"
 // Niemand lenkt: die Startpaare fahren frontal aufeinander zu und sterben
 // gleichzeitig. Genau das darf nicht von der Reihenfolge im Server abhaengen.
 await bis(() => !A.runde.laeuft, "Runde 2 zu Ende", 25_000);
-console.log(`ok  ohne Lenken endet die Runde von allein: ${A.runde.meldung}`);
+console.log(`ok  ohne Lenken endet die Runde von allein: ${A.runde.meldung?.text}`);
 
 await bis(() => A.final, "Endstand", 60_000);
 const f = A.final;
 muss(f.tabelle.length === 6, "Im Endstand fehlt jemand");
-muss(/3 Runden/.test(f.untertitel), "Falsche Rundenzahl: " + f.untertitel);
+// Seit dem 02.09.2026 schicken Meldungen ihren Schluessel mit: uebersetzt
+// wird im Client, weil am selben Tisch jeder eine andere Sprache haben kann.
+// Der deutsche Wortlaut bleibt die Quelle und faehrt als `text` mit.
+muss(/3 Runden/.test(f.untertitel?.text ?? ""), "Falsche Rundenzahl: " + JSON.stringify(f.untertitel));
+muss(f.untertitel?.k && f.untertitel?.w?.n === 3, "Dem Untertitel fehlt der Schluessel");
+muss(A.runde.meldung === null || typeof A.runde.meldung === "object",
+  "Eine Meldung kam ohne Schluessel");
 for (let i = 1; i < f.tabelle.length; i++) {
   muss(f.tabelle[i - 1].punkte >= f.tabelle[i].punkte, "Der Endstand ist nicht sortiert");
 }
-console.log("Endstand: " + f.tabelle.map((z) => `${z.name} ${z.wert}`).join(" · "));
+console.log("Endstand: " + f.tabelle.map((z) => `${z.name} ${z.wert.text}`).join(" · "));
 
 A.send({ t: "again" });
 await bis(() => A.room.phase === "lobby", "zurück im Warteraum");

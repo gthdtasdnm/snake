@@ -1,13 +1,23 @@
 // SNAKE – Client: Feld zeichnen, Richtung schicken. Mehr nicht.
-import { $, el, S, schicke, starteSchale, zeige } from "./schale.js";
+import { $, el, S, satz, schicke, starteSchale, zeige } from "./schale.js";
+import { starteSprache, t, uebersetze } from "./sprache.js";
+import { WOERTER } from "./texte.js";
+
+// Vor allem, was zeichnet: der Warteraum soll gleich in der richtigen Sprache
+// dastehen. Deutsch steht im HTML und in den Aufrufen hier.
+starteSprache(WOERTER);
 
 const HILFE = [
-  "<b>Alle Schlangen auf einem Feld.</b> Jeder hat sein eigenes Handy, gespielt wird gegeneinander.",
-  "<b>Wischen oder Pfeiltasten</b> ändern die Richtung. Kehrtwende geht nicht.",
-  "<b>Äpfel machen länger</b> und geben 10 Punkte.",
-  "<b>Wand, fremde Schlange, eigener Körper</b> – alles tödlich. Wer zuletzt lebt, bekommt 20 Punkte.",
-  "<b>Die Bewegung läuft auf dem Server</b>, damit alle denselben Zusammenstoß sehen.",
+  ["snake.h1", "<b>Alle Schlangen auf einem Feld.</b> Jeder hat sein eigenes Handy, gespielt wird gegeneinander."],
+  ["snake.h2", "<b>Wischen oder Pfeiltasten</b> ändern die Richtung. Kehrtwende geht nicht."],
+  ["snake.h3", "<b>Äpfel machen länger</b> und geben 10 Punkte."],
+  ["snake.h4", "<b>Wand, fremde Schlange, eigener Körper</b> – alles tödlich. Wer zuletzt lebt, bekommt 20 Punkte."],
+  ["snake.h5", "<b>Die Bewegung läuft auf dem Server</b>, damit alle denselben Zusammenstoß sehen."],
 ];
+
+const zeichneHilfe = () => {
+  $("helpList").innerHTML = HILFE.map(([k, d]) => `<li>${t(k, {}, d)}</li>`).join("");
+};
 
 let leinwand = null, ctx = null;
 
@@ -51,10 +61,16 @@ addEventListener("keydown", (e) => {
 function zeichneSpiel(m) {
   zeige("game");
   baueBuehne();
-  $("tbLinks").innerHTML = `Runde <strong>${m.n}</strong>/${m.total}`;
-  $("tbTag").textContent = m.laeuft ? "läuft" : "Pause";
-  if (m.meldung) $("rundenHint").textContent = m.meldung;
-  else if (m.laeuft) $("rundenHint").textContent = "Wischen oder Pfeiltasten.";
+  $("tbLinks").innerHTML =
+    `${t("snake.runde", {}, "Runde")} <strong>${m.n}</strong>/${m.total}`;
+  $("tbTag").textContent = m.laeuft
+    ? t("snake.laeuft", {}, "läuft")
+    : t("snake.pause", {}, "Pause");
+  // `m.meldung` kommt vom Server und bringt ihren Schluessel mit.
+  if (m.meldung) $("rundenHint").textContent = satz(m.meldung);
+  else if (m.laeuft) {
+    $("rundenHint").textContent = t("snake.wischen", {}, "Wischen oder Pfeiltasten.");
+  }
 
   const breite = Math.min(leinwand.parentElement.clientWidth, 620);
   const zell = Math.max(6, Math.floor(breite / m.w));
@@ -121,16 +137,19 @@ function zeichneSpiel(m) {
   }
 }
 
-$("helpList").innerHTML = HILFE.map((h) => `<li>${h}</li>`).join("");
+zeichneHilfe();
 
 // Rundenzahl als Host einstellen
 const extra = $("hostExtra");
-extra.innerHTML = `<div class="setting"><span class="setting-label">Runden</span>
+extra.innerHTML = `<div class="setting"><span class="setting-label" data-t="snake.runden">Runden</span>
   <div class="segmented">
     <button class="seg" data-runden="1">1</button>
     <button class="seg sel" data-runden="3">3</button>
     <button class="seg" data-runden="5">5</button>
   </div></div>`;
+uebersetze(extra);
+document.addEventListener("sprachwechsel", zeichneHilfe);
+
 for (const b of extra.querySelectorAll("[data-runden]")) {
   b.onclick = () => schicke({ t: "settings", runden: Number(b.dataset.runden) });
 }

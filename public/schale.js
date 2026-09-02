@@ -39,7 +39,7 @@ const T = (schluessel, werte, deutsch) =>
  * die noch nichts davon wissen, unveraendert.
  */
 export const satz = (x) =>
-  x == null ? "" : typeof x === "string" ? x : T(x.k, x.w ?? {}, x.text ?? "");
+  x == null ? "" : typeof x === "object" ? T(x.k, x.w ?? {}, x.text ?? "") : String(x);
 
 export function el(tag, cls, text) {
   const n = document.createElement(tag);
@@ -301,7 +301,7 @@ export function starteSchale({
     for (const z of m.tabelle ?? []) {
       const li = el("li");
       li.append(el("span", "pd-name", z.name));
-      li.append(el("span", "pd-pt", String(z.wert ?? z.punkte ?? "")));
+      li.append(el("span", "pd-pt", satz(z.wert ?? z.punkte ?? "")));
       ol.append(li);
     }
     $("againBtn").hidden = !binHost();

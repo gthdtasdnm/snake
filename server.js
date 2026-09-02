@@ -109,7 +109,7 @@ function starteRunde(room) {
   for (const p of room.players.values()) if (!da.includes(p)) p.lebt = false;
   for (let i = 0; i < AEPFEL; i++) neuerApfel(room);
   room.laeuft = true;
-  pushRunde(room, "Los!");
+  pushRunde(room, { text: "Los!", k: "snake.los" });
   planeTick(room);
 }
 
@@ -193,7 +193,12 @@ function pruefeRundenende(room) {
   room.laeuft = false;
   clearTimers(room);
   const sieger = lebende[0]?.name ?? null;
-  pushRunde(room, sieger ? `${sieger} überlebt die Runde.` : "Alle gleichzeitig – niemand.");
+  pushRunde(
+    room,
+    sieger
+      ? { text: `${sieger} überlebt die Runde.`, k: "snake.ueberlebt", w: { name: sieger } }
+      : { text: "Alle gleichzeitig – niemand.", k: "snake.gleichzeitig" },
+  );
   pushState(room);
 
   const id = setTimeout(() => {
@@ -233,10 +238,22 @@ function finishGame(room) {
   room.laeuft = false;
   room.phase = "final";
   const tabelle = [...room.players.values()]
-    .map((p) => ({ name: p.name, wert: p.punkte + " Punkte", punkte: p.punkte }))
+    .map((p) => ({
+      name: p.name,
+      wert: { text: p.punkte + " Punkte", k: "snake.punkte", w: { n: p.punkte } },
+      punkte: p.punkte,
+    }))
     .sort((a, b) => b.punkte - a.punkte);
   for (const p of room.players.values()) p.ready = false;
-  broadcast(room, { t: "final", tabelle, untertitel: `${room.rundeNr} Runden gespielt` });
+  broadcast(room, {
+    t: "final",
+    tabelle,
+    untertitel: {
+      text: `${room.rundeNr} Runden gespielt`,
+      k: "snake.gespielt",
+      w: { n: room.rundeNr },
+    },
+  });
   pushState(room);
   pushRoomList();
 }
